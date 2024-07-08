@@ -1,0 +1,73 @@
+import datetime
+
+class Invoice:
+    def __init__(self, company_name, company_address, client_name, client_address, client_mobile, client_email, invoice_date, invoice_number):
+        self.company_name = company_name
+        self.company_address = company_address
+        self.client_name = client_name
+        self.client_address = client_address
+        self.client_mobile = client_mobile
+        self.client_email = client_email
+        self.invoice_date = invoice_date
+        self.invoice_number = invoice_number
+        self.items = []
+        self.payment_method = ""
+
+    def add_item(self, description, quantity, unit_price, total):
+        self.items.append({
+            'description': description,
+            'quantity': quantity,
+            'unit_price': unit_price,
+            'total': total
+        })
+
+    def set_payment_method(self, payment_method):
+        self.payment_method = payment_method
+
+    def generate_invoice(self):
+        with open(f"invoice_{self.invoice_number}.txt", "w") as f:
+            f.write(f"{self.company_name}\n")
+            f.write(f"{self.company_address}\n\n")
+
+            f.write(f"Bill To: {self.client_name}\n")
+            f.write(f"{self.client_address}\n")
+            f.write(f"Mobile: {self.client_mobile}\n")
+            f.write(f"Email: {self.client_email}\n\n")
+
+            f.write(f"Invoice Date: {self.invoice_date}\n")
+            f.write(f"Invoice Number: {self.invoice_number}\n\n")
+
+            f.write("Description\tQuantity\tUnit Price\tTotal\n")
+            for item in self.items:
+                f.write(f"{item['description']}\t{item['quantity']}\t{item['unit_price']}\t{item['total']}\n")
+
+            f.write(f"\nPayment Method: {self.payment_method}\n")
+            f.write("\nThank you for your business!")
+
+def main():
+    company_name = input("Enter company name: ")
+    company_address = input("Enter company address: ")
+    client_name = input("Enter client name: ")
+    client_address = input("Enter client address: ")
+    client_mobile = input("Enter client mobile number: ")
+    client_email = input("Enter client email: ")
+    invoice_date = datetime.date.today().strftime("%Y-%m-%d")
+    invoice_number = input("Enter invoice number: ")
+
+    invoice = Invoice(company_name, company_address, client_name, client_address, client_mobile, client_email, invoice_date, invoice_number)
+
+    num_items = int(input("Enter number of items: "))
+    for i in range(num_items):
+        description = input(f"Enter item {i+1} description: ")
+        quantity = float(input(f"Enter item {i+1} quantity: "))
+        unit_price = float(input(f"Enter item {i+1} unit price: "))
+        total = quantity * unit_price
+        invoice.add_item(description, quantity, unit_price, total)
+
+    payment_method = input("Enter payment method (Cash, UPI, Card Machine): ")
+    invoice.set_payment_method(payment_method)
+
+    invoice.generate_invoice()
+
+if __name__ == "__main__":
+    main()
